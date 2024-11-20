@@ -20,7 +20,7 @@ class Engine {
     private:
         Evaluation evaluation;
         int numThreads = 8;
-        float mateScore = 20000;
+        int mateScore = 20000;
 
     public:
         template<Color color>
@@ -94,13 +94,13 @@ class Engine {
         template<Color color, int maxDepth>
         std::pair<std::array<Move, maxDepth>, int> minimax(StockDory::Board &chessBoard, int depth) {
             std::array<Move, maxDepth> bestLine;
-            float bestScore;
+            int bestScore;
             int bestLineSize;
             // Base case
 
             // White's turn
             if (chessBoard.ColorToMove() == White) {
-                bestScore = -std::numeric_limits<float>::infinity();
+                bestScore = -50000;
                 const StockDory::SimplifiedMoveList<White> moveList(chessBoard);
 
                 // Add check for no legal moves
@@ -126,7 +126,7 @@ class Engine {
                     Piece promotion = nextMove.Promotion();
                     // Perform move
                     PreviousState prevState = chessBoard.Move<0>(from, to, promotion);
-                    std::pair<std::array<Move, maxDepth>, float> result = minimax<Ocolor, maxDepth>(chessBoard, depth-1);
+                    std::pair<std::array<Move, maxDepth>, int> result = minimax<Ocolor, maxDepth>(chessBoard, depth-1);
                     // Update best score
                     if (bestScore < result.second) {
                         bestScore = result.second;
@@ -142,7 +142,7 @@ class Engine {
             }
             // Black's turn
             else {
-                bestScore = std::numeric_limits<float>::infinity();
+                bestScore = 50000;
                 const StockDory::SimplifiedMoveList<Black> moveList(chessBoard);
 
                 // Add check for no legal moves
@@ -168,7 +168,7 @@ class Engine {
                     Piece promotion = nextMove.Promotion();
                     // Perform move
                     PreviousState prevState = chessBoard.Move<0>(from, to, promotion);
-                    std::pair<std::array<Move, maxDepth>, float> result = minimax<Ocolor, maxDepth>(chessBoard, depth-1);
+                    std::pair<std::array<Move, maxDepth>, int> result = minimax<Ocolor, maxDepth>(chessBoard, depth-1);
                     // Update best score
                     if (bestScore > result.second) {
                         bestScore = result.second;
@@ -190,13 +190,13 @@ class Engine {
         std::pair<std::array<Move, maxDepth>, int> parallelMinimax(StockDory::Board &chessBoard, int depth) {
             // Local variables
             std::array<Move, maxDepth> bestLine;
-            float bestScore;
+            int bestScore;
             int bestLineSize;
             // Base case
 
             // White's turn
             if (chessBoard.ColorToMove() == White) {
-                bestScore = -std::numeric_limits<float>::infinity();
+                bestScore = -50000;
                 const StockDory::SimplifiedMoveList<White> moveList(chessBoard);
 
                 // Add check for no legal moves
@@ -223,7 +223,7 @@ class Engine {
                     Piece promotion = nextMove.Promotion();
                     // Perform move
                     PreviousState prevState = localBoard.Move<0>(from, to, promotion);
-                    std::pair<std::array<Move, maxDepth>, float> result = minimax<Ocolor, maxDepth>(localBoard, depth-1);
+                    std::pair<std::array<Move, maxDepth>, int> result = minimax<Ocolor, maxDepth>(localBoard, depth-1);
                     // Update best score
 #pragma omp critical
                     {
@@ -242,7 +242,7 @@ class Engine {
             }
             // Black's turn
             else {
-                bestScore = std::numeric_limits<float>::infinity();
+                bestScore = 50000;
                 const StockDory::SimplifiedMoveList<Black> moveList(chessBoard);
 
                 // Add check for no legal moves
@@ -269,7 +269,7 @@ class Engine {
                     Piece promotion = nextMove.Promotion();
                     // Perform move
                     PreviousState prevState = localBoard.Move<0>(from, to, promotion);
-                    std::pair<std::array<Move, maxDepth>, float> result = minimax<Ocolor, maxDepth>(localBoard, depth-1);
+                    std::pair<std::array<Move, maxDepth>, int> result = minimax<Ocolor, maxDepth>(localBoard, depth-1);
                     // Update best score
                     #pragma omp critical
                     {
@@ -290,10 +290,10 @@ class Engine {
             return std::make_pair(bestLine, bestScore);
         }
 
-        std::pair<Move, int> alphaBeta(StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<Move, int> alphaBeta(StockDory::Board &chessBoard, int alpha, int beta, int depth) {
             //local variable of best move and best score
             Move bestMove;
-            float bestScore;
+            int bestScore;
 
             //base-case -> when depth is 0, we evaluate the position score and return a default move (which will be overrided in the parent call)
             if (depth == 0) {
@@ -303,7 +303,7 @@ class Engine {
             //Minimax on white turn -> try to score as high as possible
             else if (chessBoard.ColorToMove() == White) {
                 //set best score to negative infinity at start
-                bestScore = -std::numeric_limits<float>::infinity();
+                bestScore = -50000;
                 //create move list for white
                 const StockDory::SimplifiedMoveList<White> moveList(chessBoard);
                 //iterate through the moves and calculate the best score that can be reached from the next position
@@ -313,7 +313,7 @@ class Engine {
                     Square to = nextMove.To();
                     //Perform move
                     PreviousState prevState = chessBoard.Move<0>(from, to);
-                    std::pair<Move, float> result = alphaBeta(chessBoard, alpha, beta, depth-1);
+                    std::pair<Move, int> result = alphaBeta(chessBoard, alpha, beta, depth-1);
                     //update if we found a better move for white
                     if (bestScore < result.second) {
                         bestScore = result.second;
@@ -332,7 +332,7 @@ class Engine {
             //Minimax on black turn -> try to score as low as possible
             else {
                 //set best score to positive infinity
-                bestScore = std::numeric_limits<float>::infinity();
+                bestScore = 50000;
                 //calculate possible moves for black
                 const StockDory::SimplifiedMoveList<Black> moveList(chessBoard);
                 //repeat the same thing as white but for black instead
@@ -343,7 +343,7 @@ class Engine {
                     Piece promotion = nextMove.Promotion();
                     //Perform move
                     PreviousState prevState = chessBoard.Move<0>(from, to, promotion);
-                    std::pair<Move, float> result = alphaBeta(chessBoard, alpha, beta, depth-1);
+                    std::pair<Move, int> result = alphaBeta(chessBoard, alpha, beta, depth-1);
                     if (bestScore > result.second) {
                         bestScore = result.second;
                         bestMove = nextMove;
@@ -361,9 +361,9 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, int> alphaBetaNegaMoveCounter(StockDory::Board &chessBoard, float alpha, float beta, int depth, int &count) {
+        std::pair<std::array<Move, maxDepth>, int> alphaBetaNegaMoveCounter(StockDory::Board &chessBoard, int alpha, int beta, int depth, int &count) {
              //local variable of best line and best score
-             float bestScore;
+             int bestScore;
              std::array<Move, maxDepth> bestLine;
              int bestLineSize;
              //create move list for player
@@ -388,7 +388,7 @@ class Engine {
              constexpr enum Color Ocolor = Opposite(color);
              //Assume from one perspective they are always the maximizer
              //Set best score to negative infinity at start
-             bestScore = -std::numeric_limits<float>::infinity();
+             bestScore = -50000;
              //iterate through the moves and calculate the best score that can be reached from the next position
              for (uint8_t i = 0; i < moveList.Count(); i++) {
                  count++;
@@ -398,7 +398,7 @@ class Engine {
                  Piece promotion = nextMove.Promotion();
                  //Perform move
                  PreviousState prevState = chessBoard.Move<0>(from, to, promotion);
-                 std::pair<std::array<Move, maxDepth>, float> result = alphaBetaNegaMoveCounter<Ocolor, maxDepth>(chessBoard, -beta, -alpha, depth-1, count);
+                 std::pair<std::array<Move, maxDepth>, int> result = alphaBetaNegaMoveCounter<Ocolor, maxDepth>(chessBoard, -beta, -alpha, depth-1, count);
                  //update if we found a better move for white
                  result.second = -result.second;
                  if (bestScore < result.second) {
@@ -424,9 +424,9 @@ class Engine {
          }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, int> alphaBetaNega(StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> alphaBetaNega(StockDory::Board &chessBoard, int alpha, int beta, int depth) {
              //local variable of best line and best score
-             float bestScore;
+             int bestScore;
              std::array<Move, maxDepth> bestLine;
              int bestLineSize;
              //create move list for player
@@ -451,7 +451,7 @@ class Engine {
              constexpr enum Color Ocolor = Opposite(color);
              //Assume from one perspective they are always the maximizer
              //Set best score to negative infinity at start
-             bestScore = -std::numeric_limits<float>::infinity();
+             bestScore = -50000;
              //iterate through the moves and calculate the best score that can be reached from the next position
              for (uint8_t i = 0; i < moveList.Count(); i++) {
                  Move nextMove = moveList[i];
@@ -460,7 +460,7 @@ class Engine {
                  Piece promotion = nextMove.Promotion();
                  //Perform move
                  PreviousState prevState = chessBoard.Move<0>(from, to, promotion);
-                 std::pair<std::array<Move, maxDepth>, float> result = alphaBetaNega<Ocolor, maxDepth>(chessBoard, -beta, -alpha, depth-1);
+                 std::pair<std::array<Move, maxDepth>, int> result = alphaBetaNega<Ocolor, maxDepth>(chessBoard, -beta, -alpha, depth-1);
                  //update if we found a better move for white
                  result.second = -result.second;
                  if (bestScore < result.second) {
@@ -486,9 +486,9 @@ class Engine {
          }
     
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, int> naiveParallel(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> naiveParallel(const StockDory::Board &chessBoard, int alpha, int beta, int depth) {
             std::array<Move, maxDepth> bestLine;
-            float bestScore = -std::numeric_limits<float>::infinity();
+            int bestScore = -50000;
             // create move list for player
             const StockDory::SimplifiedMoveList<color> moveList(chessBoard);
              //check for mate
@@ -517,7 +517,7 @@ class Engine {
             //create local copy for safety
             StockDory::Board boardCopy = chessBoard;
             PreviousState prevState = boardCopy.Move<0>(from, to, promotion);
-            std::pair<std::array<Move, maxDepth>, float> result = YBWC<Ocolor, maxDepth>(boardCopy, -beta, -alpha, depth - 1);
+            std::pair<std::array<Move, maxDepth>, int> result = YBWC<Ocolor, maxDepth>(boardCopy, -beta, -alpha, depth - 1);
             result.second = -result.second;
             boardCopy.UndoMove<0>(prevState, from, to);
             if (result.second > bestScore) {
@@ -569,9 +569,9 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, int> YBWC(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> YBWC(const StockDory::Board &chessBoard, int alpha, int beta, int depth) {
             std::array<Move, maxDepth> bestLine;
-            float bestScore = -std::numeric_limits<float>::infinity();
+            int bestScore = -50000;
             // create move list for player
             const StockDory::SimplifiedMoveList<color> moveList(chessBoard);
              //check for mate
@@ -600,7 +600,7 @@ class Engine {
             //create local copy for safety
             StockDory::Board boardCopy = chessBoard;
             PreviousState prevState = boardCopy.Move<0>(from, to, promotion);
-            std::pair<std::array<Move, maxDepth>, float> result = YBWC<Ocolor, maxDepth>(boardCopy, -beta, -alpha, depth - 1);
+            std::pair<std::array<Move, maxDepth>, int> result = YBWC<Ocolor, maxDepth>(boardCopy, -beta, -alpha, depth - 1);
             result.second = -result.second;
             boardCopy.UndoMove<0>(prevState, from, to);
             if (result.second > bestScore) {
@@ -652,9 +652,9 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, int> PVS(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> PVS(const StockDory::Board &chessBoard, int alpha, int beta, int depth) {
             std::array<Move, maxDepth> bestLine;
-            float bestScore = -std::numeric_limits<float>::infinity();
+            int bestScore = -50000;
             // create move list for player
             const StockDory::SimplifiedMoveList<color> moveList(chessBoard);
              //check for mate
@@ -683,7 +683,7 @@ class Engine {
             //create local copy for safety
             StockDory::Board boardCopy = chessBoard;
             PreviousState prevState = boardCopy.Move<0>(from, to, promotion);
-            std::pair<std::array<Move, maxDepth>, float> result = PVS<Ocolor, maxDepth>(boardCopy, -beta, -alpha, depth - 1);
+            std::pair<std::array<Move, maxDepth>, int> result = PVS<Ocolor, maxDepth>(boardCopy, -beta, -alpha, depth - 1);
             result.second = -result.second;
             boardCopy.UndoMove<0>(prevState, from, to);
             if (result.second > bestScore) {
@@ -735,9 +735,9 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, int> alphaBetaNegaParallel(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> alphaBetaNegaParallel(const StockDory::Board &chessBoard, int alpha, int beta, int depth) {
             std::array<Move, maxDepth> bestLine;
-            float bestScore = -std::numeric_limits<float>::infinity();
+            int bestScore = -50000;
             // create move list for player
             const StockDory::SimplifiedMoveList<color> moveList(chessBoard);
              //check for mate

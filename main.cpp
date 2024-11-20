@@ -113,8 +113,8 @@ int main(int argc, char* argv[]) {
             tstart = omp_get_wtime();
             result = engine.YBWC<White, maxDepth>(
                 chessBoard,
-                -std::numeric_limits<float>::infinity(),
-                std::numeric_limits<float>::infinity(),
+                -50000,
+                50000,
                 depth
             );
             tend = omp_get_wtime();
@@ -144,8 +144,8 @@ int main(int argc, char* argv[]) {
             tstart = omp_get_wtime();
             result = engine.YBWC<Black, maxDepth>(
                 chessBoard,
-                -std::numeric_limits<float>::infinity(),
-                std::numeric_limits<float>::infinity(),
+                -50000,
+                50000,
                 depth
             );
             tend = omp_get_wtime();
@@ -177,8 +177,8 @@ int main(int argc, char* argv[]) {
             tstart = omp_get_wtime();
             result = engine.PVS<White, maxDepth>(
                 chessBoard,
-                -std::numeric_limits<float>::infinity(),
-                std::numeric_limits<float>::infinity(),
+                -50000,
+                50000,
                 depth
             );
             tend = omp_get_wtime();
@@ -208,8 +208,8 @@ int main(int argc, char* argv[]) {
             tstart = omp_get_wtime();
             result = engine.PVS<Black, maxDepth>(
                 chessBoard,
-                -std::numeric_limits<float>::infinity(),
-                std::numeric_limits<float>::infinity(),
+                -50000,
+                50000,
                 depth
             );
             tend = omp_get_wtime();
@@ -272,8 +272,8 @@ int main(int argc, char* argv[]) {
                     int count = 0;
                     std::pair<std::array<Move, maxDepth>, int> result = engine.alphaBetaNegaMoveCounter<White, maxDepth>(
                         chessBoard,
-                        -std::numeric_limits<float>::infinity(),
-                        std::numeric_limits<float>::infinity(),
+                        -50000,
+                        50000,
                         depth,
                         count
                     );
@@ -292,8 +292,8 @@ int main(int argc, char* argv[]) {
                     int count = 0;
                     std::pair<std::array<Move, maxDepth>, int> result = engine.alphaBetaNegaMoveCounter<Black, maxDepth>(
                         chessBoard,
-                        -std::numeric_limits<float>::infinity(),
-                        std::numeric_limits<float>::infinity(),
+                        -50000,
+                        50000,
                         depth,
                         count
                     );
@@ -437,8 +437,8 @@ int main(int argc, char* argv[]) {
                         tstart = omp_get_wtime();
                         std::pair<std::array<Move, maxDepth>, int> result = engine.alphaBetaNega<White, maxDepth>(
                         chessBoard,
-                        -std::numeric_limits<float>::infinity(),
-                        std::numeric_limits<float>::infinity(),
+                        -50000,
+                        50000,
                             depth
                         );
                         tend = omp_get_wtime();
@@ -466,8 +466,8 @@ int main(int argc, char* argv[]) {
                         tstart = omp_get_wtime();
                         std::pair<std::array<Move, maxDepth>, int> result = engine.alphaBetaNega<Black, maxDepth>(
                         chessBoard,
-                        -std::numeric_limits<float>::infinity(),
-                        std::numeric_limits<float>::infinity(),
+                        -50000,
+                        50000,
                             depth
                         );
                         tend = omp_get_wtime();
@@ -507,8 +507,8 @@ int main(int argc, char* argv[]) {
                             tstart = omp_get_wtime();
                             std::pair<std::array<Move, maxDepth>, int> result = engine.naiveParallel<White, maxDepth>(
                                 chessBoard,
-                                -std::numeric_limits<float>::infinity(),
-                                std::numeric_limits<float>::infinity(),
+                                -50000,
+                                50000,
                                 depth
                             );
                             tend = omp_get_wtime();
@@ -536,8 +536,8 @@ int main(int argc, char* argv[]) {
                             tstart = omp_get_wtime();
                             std::pair<std::array<Move, maxDepth>, int> result = engine.naiveParallel<Black, maxDepth>(
                                 chessBoard,
-                                -std::numeric_limits<float>::infinity(),
-                                std::numeric_limits<float>::infinity(),
+                                -50000,
+                                50000,
                                 depth
                             );
                             tend = omp_get_wtime();
@@ -578,8 +578,8 @@ int main(int argc, char* argv[]) {
                             tstart = omp_get_wtime();
                             std::pair<std::array<Move, maxDepth>, int> result = engine.YBWC<White, maxDepth>(
                                 chessBoard,
-                                -std::numeric_limits<float>::infinity(),
-                                std::numeric_limits<float>::infinity(),
+                                -50000,
+                                50000,
                                 depth
                             );
                             tend = omp_get_wtime();
@@ -607,8 +607,8 @@ int main(int argc, char* argv[]) {
                             tstart = omp_get_wtime();
                             std::pair<std::array<Move, maxDepth>, int> result = engine.YBWC<Black, maxDepth>(
                                 chessBoard,
-                                -std::numeric_limits<float>::infinity(),
-                                std::numeric_limits<float>::infinity(),
+                                -50000,
+                                50000,
                                 depth
                             );
                             tend = omp_get_wtime();
@@ -649,8 +649,8 @@ int main(int argc, char* argv[]) {
                             tstart = omp_get_wtime();
                             std::pair<std::array<Move, maxDepth>, int> result = engine.PVS<White, maxDepth>(
                                 chessBoard,
-                                -std::numeric_limits<float>::infinity(),
-                                std::numeric_limits<float>::infinity(),
+                                -50000,
+                                50000,
                                 depth
                             );
                             tend = omp_get_wtime();
@@ -678,8 +678,8 @@ int main(int argc, char* argv[]) {
                             tstart = omp_get_wtime();
                             std::pair<std::array<Move, maxDepth>, int> result = engine.PVS<Black, maxDepth>(
                                 chessBoard,
-                                -std::numeric_limits<float>::infinity(),
-                                std::numeric_limits<float>::infinity(),
+                                -50000,
+                                50000,
                                 depth
                             );
                             tend = omp_get_wtime();
