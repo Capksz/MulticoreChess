@@ -35,12 +35,12 @@ class Engine {
                 }
                 else if (moveList.Count() == 0) {
                     // No legal moves
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return 0;
                 }
 
                 if (depth == 0) {
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return 0;
                 }
                 constexpr Color Ocolor = Opposite(color);
@@ -66,12 +66,12 @@ class Engine {
                 }
                 else if (moveList.Count() == 0) {
                     // No legal moves
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return 0;
                 }
 
                 if (depth == 0) {
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return 0;
                 }
                 constexpr Color Ocolor = Opposite(color);
@@ -92,7 +92,7 @@ class Engine {
         }
         //minimax implementation
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, float> minimax(StockDory::Board &chessBoard, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> minimax(StockDory::Board &chessBoard, int depth) {
             std::array<Move, maxDepth> bestLine;
             float bestScore;
             int bestLineSize;
@@ -109,12 +109,12 @@ class Engine {
                 }
                 else if (moveList.Count() == 0) {
                     // No legal moves
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return std::make_pair(std::array<Move, maxDepth>(), 0);
                 }
 
                 if (depth == 0) {
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return std::make_pair(std::array<Move, maxDepth>(), score);
                 }
                 constexpr Color Ocolor = Opposite(color);
@@ -151,12 +151,12 @@ class Engine {
                 }
                 else if (moveList.Count() == 0) {
                     // No legal moves
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return std::make_pair(std::array<Move, maxDepth>(), 0);
                 }
 
                 if (depth == 0) {
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return std::make_pair(std::array<Move, maxDepth>(), score);
                 }
                 constexpr Color Ocolor = Opposite(color);
@@ -187,7 +187,7 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, float> parallelMinimax(StockDory::Board &chessBoard, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> parallelMinimax(StockDory::Board &chessBoard, int depth) {
             // Local variables
             std::array<Move, maxDepth> bestLine;
             float bestScore;
@@ -205,12 +205,12 @@ class Engine {
                 }
                 else if (moveList.Count() == 0) {
                     // No legal moves
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return std::make_pair(std::array<Move, maxDepth>(), 0);
                 }
 
                 if (depth == 0) {
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return std::make_pair(std::array<Move, maxDepth>(), score);
                 }
                 constexpr Color Ocolor = Opposite(color);
@@ -251,12 +251,12 @@ class Engine {
                 }
                 else if (moveList.Count() == 0) {
                     // No legal moves
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return std::make_pair(std::array<Move, maxDepth>(), 0);
                 }
 
                 if (depth == 0) {
-                    float score = evaluation.eval(chessBoard);
+                    int score = evaluation.eval(chessBoard);
                     return std::make_pair(std::array<Move, maxDepth>(), score);
                 }
                 constexpr Color Ocolor = Opposite(color);
@@ -290,14 +290,14 @@ class Engine {
             return std::make_pair(bestLine, bestScore);
         }
 
-        std::pair<Move, float> alphaBeta(StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<Move, int> alphaBeta(StockDory::Board &chessBoard, float alpha, float beta, int depth) {
             //local variable of best move and best score
             Move bestMove;
             float bestScore;
 
             //base-case -> when depth is 0, we evaluate the position score and return a default move (which will be overrided in the parent call)
             if (depth == 0) {
-                float score = evaluation.eval(chessBoard);
+                int score = evaluation.eval(chessBoard);
                 return std::make_pair(Move(), score);
             }
             //Minimax on white turn -> try to score as high as possible
@@ -361,7 +361,7 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, float> alphaBetaNegaMoveCounter(StockDory::Board &chessBoard, float alpha, float beta, int depth, int &count) {
+        std::pair<std::array<Move, maxDepth>, int> alphaBetaNegaMoveCounter(StockDory::Board &chessBoard, float alpha, float beta, int depth, int &count) {
              //local variable of best line and best score
              float bestScore;
              std::array<Move, maxDepth> bestLine;
@@ -378,7 +378,7 @@ class Engine {
              }
              //base-case -> when depth is 0, we evaluate the position score and return a default move (which will be overrided in the parent call)
              if (depth == 0) {
-                 float score = evaluation.eval(chessBoard);
+                 int score = evaluation.eval(chessBoard);
                  //flip the score for black since we are maximizing
                  if (color == Black) {
                      score *= -1;
@@ -424,7 +424,7 @@ class Engine {
          }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, float> alphaBetaNega(StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> alphaBetaNega(StockDory::Board &chessBoard, float alpha, float beta, int depth) {
              //local variable of best line and best score
              float bestScore;
              std::array<Move, maxDepth> bestLine;
@@ -441,7 +441,7 @@ class Engine {
              }
              //base-case -> when depth is 0, we evaluate the position score and return a default move (which will be overrided in the parent call)
              if (depth == 0) {
-                 float score = evaluation.eval(chessBoard);
+                 int score = evaluation.eval(chessBoard);
                  //flip the score for black since we are maximizing
                  if (color == Black) {
                      score *= -1;
@@ -486,7 +486,7 @@ class Engine {
          }
     
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, float> naiveParallel(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> naiveParallel(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
             std::array<Move, maxDepth> bestLine;
             float bestScore = -std::numeric_limits<float>::infinity();
             // create move list for player
@@ -500,7 +500,7 @@ class Engine {
                 return std::make_pair(std::array<Move, maxDepth>(), 0);
             }
             if (depth == 0) {
-                float score = evaluation.eval(chessBoard);
+                int score = evaluation.eval(chessBoard);
                 if (color == Black) {
                     score *= -1;
                 }
@@ -549,7 +549,7 @@ class Engine {
                 Square to = nextMove.To();
                 Piece promotion = nextMove.Promotion();
                 PreviousState prevState = threadBoard.Move<0>(from, to, promotion);
-                std::pair<std::array<Move, maxDepth>, float> localResult = alphaBetaNega<Ocolor, maxDepth>(threadBoard, -beta, -alpha, depth - 1);
+                std::pair<std::array<Move, maxDepth>, int> localResult = alphaBetaNega<Ocolor, maxDepth>(threadBoard, -beta, -alpha, depth - 1);
                 localResult.second = -localResult.second;
                 threadBoard.UndoMove<0>(prevState, from, to);
                 #pragma omp critical
@@ -569,7 +569,7 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, float> YBWC(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> YBWC(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
             std::array<Move, maxDepth> bestLine;
             float bestScore = -std::numeric_limits<float>::infinity();
             // create move list for player
@@ -583,7 +583,7 @@ class Engine {
                 return std::make_pair(std::array<Move, maxDepth>(), 0);
             }
             if (depth == 0) {
-                float score = evaluation.eval(chessBoard);
+                int score = evaluation.eval(chessBoard);
                 if (color == Black) {
                     score *= -1;
                 }
@@ -632,7 +632,7 @@ class Engine {
                 Square to = nextMove.To();
                 Piece promotion = nextMove.Promotion();
                 PreviousState prevState = threadBoard.Move<0>(from, to, promotion);
-                std::pair<std::array<Move, maxDepth>, float> localResult = YBWC<Ocolor, maxDepth>(threadBoard, -beta, -alpha, depth - 1);
+                std::pair<std::array<Move, maxDepth>, int> localResult = YBWC<Ocolor, maxDepth>(threadBoard, -beta, -alpha, depth - 1);
                 localResult.second = -localResult.second;
                 threadBoard.UndoMove<0>(prevState, from, to);
                 #pragma omp critical
@@ -652,7 +652,7 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, float> PVS(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> PVS(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
             std::array<Move, maxDepth> bestLine;
             float bestScore = -std::numeric_limits<float>::infinity();
             // create move list for player
@@ -666,7 +666,7 @@ class Engine {
                 return std::make_pair(std::array<Move, maxDepth>(), 0);
             }
             if (depth == 0) {
-                float score = evaluation.eval(chessBoard);
+                int score = evaluation.eval(chessBoard);
                 if (color == Black) {
                     score *= -1;
                 }
@@ -715,7 +715,7 @@ class Engine {
                 Square to = nextMove.To();
                 Piece promotion = nextMove.Promotion();
                 PreviousState prevState = threadBoard.Move<0>(from, to, promotion);
-                std::pair<std::array<Move, maxDepth>, float> localResult = alphaBetaNegaParallel<Ocolor, maxDepth>(threadBoard, -beta, -alpha, depth - 1);
+                std::pair<std::array<Move, maxDepth>, int> localResult = alphaBetaNegaParallel<Ocolor, maxDepth>(threadBoard, -beta, -alpha, depth - 1);
                 localResult.second = -localResult.second;
                 threadBoard.UndoMove<0>(prevState, from, to);
                 #pragma omp critical
@@ -735,7 +735,7 @@ class Engine {
         }
 
         template<Color color, int maxDepth>
-        std::pair<std::array<Move, maxDepth>, float> alphaBetaNegaParallel(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
+        std::pair<std::array<Move, maxDepth>, int> alphaBetaNegaParallel(const StockDory::Board &chessBoard, float alpha, float beta, int depth) {
             std::array<Move, maxDepth> bestLine;
             float bestScore = -std::numeric_limits<float>::infinity();
             // create move list for player
@@ -749,7 +749,7 @@ class Engine {
                 return std::make_pair(std::array<Move, maxDepth>(), 0);
             }
             if (depth == 0) {
-                float score = evaluation.eval(chessBoard);
+                int score = evaluation.eval(chessBoard);
                 if (color == Black) {
                     score *= -1;
                 }
@@ -773,7 +773,7 @@ class Engine {
                 Square to = nextMove.To();
                 Piece promotion = nextMove.Promotion();
                 PreviousState prevState = threadBoard.Move<0>(from, to, promotion);
-                std::pair<std::array<Move, maxDepth>, float> localResult = alphaBetaNegaParallel<Ocolor, maxDepth>(threadBoard, -beta, -alpha, depth - 1);
+                std::pair<std::array<Move, maxDepth>, int> localResult = alphaBetaNegaParallel<Ocolor, maxDepth>(threadBoard, -beta, -alpha, depth - 1);
                 localResult.second = -localResult.second;
                 threadBoard.UndoMove<0>(prevState, from, to);
                 #pragma omp critical

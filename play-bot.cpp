@@ -119,8 +119,8 @@ int main(int argc, char* argv[]) {
                 // Perform YBWC for White
                 result = engine.YBWC<White, maxDepth>(
                     chessBoard,
-                    std::numeric_limits<int>::min(),
-                    std::numeric_limits<int>::max(),
+                    -std::numeric_limits<float>::infinity(),
+                    std::numeric_limits<float>::infinity(),
                     depth
                 );
 
@@ -160,8 +160,8 @@ int main(int argc, char* argv[]) {
                 // Perform YBWC for Black
                 result = engine.YBWC<Black, maxDepth>(
                     chessBoard,
-                    std::numeric_limits<int>::min(),
-                    std::numeric_limits<int>::max(),
+                    -std::numeric_limits<float>::infinity(),
+                    std::numeric_limits<float>::infinity(),
                     depth
                 );
 
@@ -200,8 +200,8 @@ int main(int argc, char* argv[]) {
                 // Perform PVS for White
                 result = engine.PVS<White, maxDepth>(
                     chessBoard,
-                    std::numeric_limits<int>::min(),
-                    std::numeric_limits<int>::max(),
+                    -std::numeric_limits<float>::infinity(),
+                    std::numeric_limits<float>::infinity(),
                     depth
                 );
 
@@ -237,8 +237,8 @@ int main(int argc, char* argv[]) {
                 // Perform PVS for Black
                 result = engine.PVS<Black, maxDepth>(
                     chessBoard,
-                    std::numeric_limits<int>::min(),
-                    std::numeric_limits<int>::max(),
+                    -std::numeric_limits<float>::infinity(),
+                    std::numeric_limits<float>::infinity(),
                     depth
                 );
 
