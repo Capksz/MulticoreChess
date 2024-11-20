@@ -1,6 +1,7 @@
 #Ignore build contents
 build/
 main.exe
+*.exe
 
 # Ignore CLion project files
 .idea/
