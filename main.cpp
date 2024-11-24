@@ -11,6 +11,7 @@
 #include <omp.h>
 #include <fstream> // For file I/O
 #include <iomanip> // For formatting output
+#include <queue>
 
 constexpr int maxDepth = 25;
 
@@ -32,8 +33,9 @@ void displayAlgorithmOptions() {
     std::cout << "Choose Search Algorithm:\n";
     std::cout << "1. Young Brothers Wait Concept (YBWC)\n";
     std::cout << "2. Principal Variation Search (PVS)\n";
-    std::cout << "3. testing function\n";
-    std::cout << "Enter your choice (1,2, or 3): ";
+    std::cout << "3. Testing function\n";
+    std::cout << "4. YBWC with work stealing (YBWCWS)\n";
+    std::cout << "Enter your choice (1, 2, 3, or 4): ";
 }
 
 int main(int argc, char* argv[]) {
@@ -64,14 +66,14 @@ int main(int argc, char* argv[]) {
         if (std::cin.fail()) {
             std::cin.clear(); // Clear the error flags
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Discard invalid input
-            std::cerr << "Invalid input. Please enter 1, or 2.\n";
+            std::cerr << "Invalid input. Please enter 1, 2, 3, or 4.\n";
             continue;
         }
 
-        if (algorithmChoice == 1 || algorithmChoice == 2 || algorithmChoice == 3) {
+        if (algorithmChoice >= 1 && algorithmChoice <= 4) {
             break; // Valid choice
         } else {
-            std::cerr << "Invalid choice: " << algorithmChoice << ". Please enter 1, 2 or 3.\n";
+            std::cerr << "Invalid choice: " << algorithmChoice << ". Please enter 1, 2, 3, or 4.\n";
         }
     }
 
@@ -86,6 +88,9 @@ int main(int argc, char* argv[]) {
             break;
         case 3:
             algorithmName = "All algorithms";
+            break;
+        case 4:
+            algorithmName = "Young Brothers Wait Concept with Work Stealing (YBWCWS)";
             break;
         default:
             // This case should never occur due to the earlier validation
@@ -104,8 +109,9 @@ int main(int argc, char* argv[]) {
     Color currentPlayer = chessBoard.ColorToMove();
 
     // Define a pair to hold the result (best move sequence and its score)
-    std::pair<std::array<Move, maxDepth>, int> result;
-    double tstart = 0.0, tend=0.0, ttaken;
+    std::pair<std::array<Move, maxDepth>, float> result;
+    double tstart = 0.0, tend = 0.0, ttaken;
+
     // Execute the appropriate search algorithm based on the user's choice and current player
     if (algorithmChoice == 1) { // YBWC
         if (currentPlayer == White) {
@@ -118,7 +124,7 @@ int main(int argc, char* argv[]) {
                 depth
             );
             tend = omp_get_wtime();
-            ttaken = tend-tstart;
+            ttaken = tend - tstart;
             printf("Time taken for main part: %f\n", ttaken);
             // Check if there is at least one move in the sequence
             if (!result.first.empty()) {
@@ -138,8 +144,7 @@ int main(int argc, char* argv[]) {
             } else {
                 std::cout << "No moves available for White.\n";
             }
-        }
-        else if (currentPlayer == Black) {
+        } else if (currentPlayer == Black) {
             // Perform YBWC for Black
             tstart = omp_get_wtime();
             result = engine.YBWC<Black, maxDepth>(
@@ -149,7 +154,7 @@ int main(int argc, char* argv[]) {
                 depth
             );
             tend = omp_get_wtime();
-            ttaken = tend-tstart;
+            ttaken = tend - tstart;
             printf("Time taken for main part: %f\n", ttaken);
             // Check if there is at least one move in the sequence
             if (!result.first.empty()) {
@@ -170,9 +175,9 @@ int main(int argc, char* argv[]) {
                 std::cout << "No moves available for Black.\n";
             }
         }
-    }
-    else if (algorithmChoice == 2) { // PVS
-        if (currentPlayer == White) {
+    } else if (algorithmChoice == 2) { // PVS
+        // Similar logic as above for PVS (omitted for brevity)
+                if (currentPlayer == White) {
             // Perform PVS for White
             tstart = omp_get_wtime();
             result = engine.PVS<White, maxDepth>(
@@ -235,6 +240,7 @@ int main(int argc, char* argv[]) {
             }
         }
     }
+
     else if (algorithmChoice == 3) {
         const char* mateIn3FENs[] = {
             "7k/8/3NK3/5BN1/8/8/8/8 w - - 0 1",
@@ -783,6 +789,72 @@ int main(int argc, char* argv[]) {
 
         }
 
+    }
+ 
+    
+    
+    else if (algorithmChoice == 4) { // YBWCWS
+        if (currentPlayer == White) {
+            // Perform YBWCWS for White
+            tstart = omp_get_wtime();
+            result = engine.YBWCWS<White, maxDepth>(
+                chessBoard,
+                -50000,
+                50000,
+                depth
+            );
+            tend = omp_get_wtime();
+            ttaken = tend - tstart;
+            printf("Time taken for main part (YBWCWS): %f\n", ttaken);
+            // Check if there is at least one move in the sequence
+            if (!result.first.empty()) {
+                Move bestMove = result.first.front();
+                std::cout << "White's Best Move (YBWCWS): "
+                          << squareToString(bestMove.From()) << " to "
+                          << squareToString(bestMove.To())
+                          << " with score " << result.second << "\n";
+
+                // Print the entire sequence of moves (best line)
+                std::cout << "Best Line: ";
+                for (const Move &move : result.first) {
+                    std::cout << squareToString(move.From()) << " to "
+                              << squareToString(move.To()) << ", ";
+                }
+                std::cout << "\n";
+            } else {
+                std::cout << "No moves available for White.\n";
+            }
+        } else if (currentPlayer == Black) {
+            // Perform YBWCWS for Black
+            tstart = omp_get_wtime();
+            result = engine.YBWCWS<Black, maxDepth>(
+                chessBoard,
+                -50000,
+                50000,
+                depth
+            );
+            tend = omp_get_wtime();
+            ttaken = tend - tstart;
+            printf("Time taken for main part (YBWCWS): %f\n", ttaken);
+            // Check if there is at least one move in the sequence
+            if (!result.first.empty()) {
+                Move bestMove = result.first.front();
+                std::cout << "Black's Best Move (YBWCWS): "
+                          << squareToString(bestMove.From()) << " to "
+                          << squareToString(bestMove.To())
+                          << " with score " << result.second << "\n";
+
+                // Print the entire sequence of moves (best line)
+                std::cout << "Best Line: ";
+                for (const Move &move : result.first) {
+                    std::cout << squareToString(move.From()) << " to "
+                              << squareToString(move.To()) << ", ";
+                }
+                std::cout << "\n";
+            } else {
+                std::cout << "No moves available for Black.\n";
+            }
+        }
     }
 
     return 0;
