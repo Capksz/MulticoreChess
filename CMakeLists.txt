@@ -54,6 +54,12 @@ add_executable(m4 m4.cpp
         Evaluation.h
         Engine.h
 )
+add_executable(ybwcws ybwcws.cpp
+        Backend/Move/MoveList.h
+        SimplifiedMoveList.h
+        Evaluation.h
+        Engine.h
+)
 
 find_package(OpenMP REQUIRED)
 if (OpenMP_C_FOUND)
@@ -63,4 +69,6 @@ if (OpenMP_C_FOUND)
     target_link_options(play-bot PUBLIC -fopenmp)
     target_compile_options(m4 PUBLIC -fopenmp)
     target_link_options(m4 PUBLIC -fopenmp)
+    target_compile_options(ybwcws PUBLIC -fopenmp)
+    target_link_options(ybwcws PUBLIC -fopenmp)
 endif()
